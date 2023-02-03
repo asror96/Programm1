@@ -1,15 +1,21 @@
 #include <iostream>
+#include<fstream>
 #include <string>  
 #include<array>
+#include <stdio.h>
 #include <algorithm>
+
 using namespace std;
 class Sort_1{
     public:
     bool steam1(string numbers){
+       int c;
         int buf;
         const int size=end(numbers)-begin(numbers);
+        string array[size];
+    
         int num[size];
-        if(size==64){
+        if(size<=64){
             for(int i=0;i<size;i++){
                 buf=(int)numbers[i];
                 if(buf<48||buf>57){
@@ -24,13 +30,32 @@ class Sort_1{
             quicksort(num, 0, size);
             for (size_t i = 0; i < size; i++)
             {
-                cout<<num[i]-48 <<"\n";
+               // cout<<num[i]-48 <<"\n";
+                c=(num[i]-48)%2;
+                if(c==0&&(num[i]-48)!=0){
+                    array[i]="KB";
+                }
+                else{
+                    array[i]=(char)num[i];
+                }
+
             }
+            ofstream fout;
+           fout.open("buffer.txt");
+
             
+            if (fout.is_open()){
+                for (size_t i = 0; i < size; i++){
+                    fout<<array[i];
+                }
+            }
+            else{
+                cout<<"Error file open!"<< endl;
+            }
             return true;
         }
         else{
-            cout << " More or less than 64 symbols!." << endl;
+            cout << " More than 64 symbols!." << endl;
             return false;
         }
     }
@@ -84,6 +109,7 @@ class Sort_1{
     
 };
 int main() {
+    
     Sort_1 sort;
     cout << "insert the number";	
     string numbers;

@@ -4,12 +4,23 @@
 #include<array>
 #include <stdio.h>
 #include <algorithm>
+#include <thread>
+#include<cstdio>
+#include <mutex>
 
 using namespace std;
-class Sort_1{
+mutex mtx;
+class Steam{
     public:
-    bool steam1(string numbers){
-       int c;
+    bool steam1(){
+        cout<<"Steam 1 START!"<<endl;
+       
+        cout << "Insert the number : ";	
+       
+        string numbers;
+        cin >> numbers;
+       
+        int c;
         int buf;
         const int size=end(numbers)-begin(numbers);
         string array[size];
@@ -30,7 +41,7 @@ class Sort_1{
             quicksort(num, 0, size);
             for (size_t i = 0; i < size; i++)
             {
-               // cout<<num[i]-48 <<"\n";
+                cout<<num[i]-48 ;
                 c=(num[i]-48)%2;
                 if(c==0&&(num[i]-48)!=0){
                     array[i]="KB";
@@ -40,6 +51,7 @@ class Sort_1{
                 }
 
             }
+            cout<<endl;
             ofstream fout;
            fout.open("buffer.txt");
 
@@ -48,31 +60,32 @@ class Sort_1{
                 for (size_t i = 0; i < size; i++){
                     fout<<array[i];
                 }
+                fout<<endl;
             }
             else{
                 cout<<"Error file open!"<< endl;
+                cout<<"Steam 1 END!"<<endl;
+                return false;
             }
+            fout.close();
+            cout<<"Steam 1 END!"<<endl;
             return true;
         }
         else{
             cout << " More than 64 symbols!." << endl;
+             cout<<"Steam 1 END!"<<endl;
             return false;
         }
+        cout<<"Steam 1 END!"<<endl;
+        return false;
+        
     }
 
 
     int partition(int a[], int start, int end)
     {
-        // Выбираем крайний правый элемент в качестве опорного элемента массива
         int pivot = a[end];
-    
-        // элементы, меньшие точки поворота, будут перемещены влево от `pIndex`
-        // элементы больше, чем точка поворота, будут сдвинуты вправо от `pIndex`
-        // равные элементы могут идти в любом направлении
         int pIndex = start;
-    
-        // каждый раз, когда мы находим элемент, меньший или равный опорному, `pIndex`
-        // увеличивается, и этот элемент будет помещен перед опорной точкой.
         for (int i = start; i < end; i++)
         {
             if (a[i] >= pivot)
@@ -81,43 +94,113 @@ class Sort_1{
                 pIndex++;
             }
         }
-    
-        // поменять местами `pIndex` с пивотом
         swap (a[pIndex], a[end]);
-    
-        // вернуть `pIndex` (индекс опорного элемента)
         return pIndex;
     }
-    
-    // Процедура быстрой сортировки
     void quicksort(int a[], int start, int end)
     {
-        // базовое условие
         if (start >= end) {
             return;
         }
-    
-        // переставить элементы по оси
         int pivot = partition(a, start, end);
-    
-        // повторяем подмассив, содержащий элементы, меньшие опорной точки
         quicksort(a, start, pivot - 1);
-    
-        // повторяем подмассив, содержащий элементы, превышающие точку опоры
         quicksort(a, pivot + 1, end);
+    }
+    int steam2(){
+        cout<<"Steam 2 START!"<<endl;
+        
+        int result;
+        string temp;
+        fstream fin;
+        fin.open("buffer.txt");
+        if(fin.is_open()){
+           fin >> temp ;
+        }
+        else{
+            cout<<"Error file open!"<< endl;
+        }
+        fin.close();
+        const int size=end(temp)-begin(temp);
+        int proverka;
+        for (size_t i = 0; i < size; i++)
+        {
+           proverka=(int)temp[i];
+           if(proverka >= 48 && proverka <= 57){
+                result=result+proverka;
+           }
+        }
+        cout<<endl;
+        ofstream ofs ("buffer.txt", ios::out | ios::trunc);
+        ofs.close ();
+        cout<<"Steam 2 END!"<<endl;
+        return result;
     }
     
 };
+class Prog2
+{
+private:
+    /* data */
+public:
+   void print(int result){
+    cout<<"Prog2 START!"<<endl;
+    
+    cout<<result<<endl;
+    int colichestvo=result;
+    
+    bool flag=true;
+    int p=1;
+        while (flag)
+        {   
+            colichestvo=colichestvo/10;
+            p++;
+            if(colichestvo/10==0){
+                flag=false;
+            }
+        }
+    
+       int kratnost_32=result%32;
+        if(p>2&&kratnost_32==0){
+            cout<<result<<endl;
+            cout<<"Prog2 END!"<<endl;
+        }
+        else{
+            cout<<"It is not more than 2 characters and it is not a multiple of 32 !!!."<<endl;
+            cout<<"Prog2 END!"<<endl;
+        }
+       
+        
+   }
+};
+
+
+
 int main() {
     
-    Sort_1 sort;
-    cout << "insert the number";	
-    string numbers;
-    cin >> numbers;
+    Steam Steam;
+    Prog2 Prog;
     
-    bool flag=sort.steam1(numbers);
-   
-   
+    bool flag=false;
+    
+    int res;
+    
+    
+    
+    thread steam1([&](){
+       flag=Steam.steam1();
+    });
+    if(flag==true){
+       thread steam2([&](){
+           res=Steam.steam2();
+        });
+        
+        thread t([&](){
+            Prog.print(res);
+       });
+        steam2.join();
+        t.join();
+    }
+    steam1.join();
     
     return 0;
 }

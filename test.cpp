@@ -13,8 +13,8 @@ mutex mtx;
 class Steam{
     public:
     bool steam1(){
-        cout<<"Steam 1 START!"<<endl;
-       
+        cout << "Steam 1 with id : "<< this_thread::get_id() <<endl;
+  
         cout << "Insert the number : ";	
        
         string numbers;
@@ -64,19 +64,19 @@ class Steam{
             }
             else{
                 cout<<"Error file open!"<< endl;
-                cout<<"Steam 1 END!"<<endl;
+                cout<<"Steam end with id : "<< this_thread::get_id() <<endl;
                 return false;
             }
             fout.close();
-            cout<<"Steam 1 END!"<<endl;
+            cout<<"Steam end with id : "<< this_thread::get_id() <<endl;
             return true;
         }
         else{
             cout << " More than 64 symbols!." << endl;
-             cout<<"Steam 1 END!"<<endl;
+            cout<<"Steam end with id : "<< this_thread::get_id() <<endl;
             return false;
         }
-        cout<<"Steam 1 END!"<<endl;
+        cout<<"Steam end with id : "<< this_thread::get_id() <<endl;
         return false;
         
     }
@@ -107,8 +107,8 @@ class Steam{
         quicksort(a, pivot + 1, end);
     }
     int steam2(){
-        cout<<"Steam 2 START!"<<endl;
-        
+        cout<<"Steam 2 with id : "<< this_thread::get_id()<< endl;
+       
         int result;
         string temp;
         fstream fin;
@@ -132,7 +132,7 @@ class Steam{
         cout<<endl;
         ofstream ofs ("buffer.txt", ios::out | ios::trunc);
         ofs.close ();
-        cout<<"Steam 2 END!"<<endl;
+        cout<<"Steam 2 end with id : "<< this_thread::get_id() <<endl;
         return result;
     }
     
@@ -143,8 +143,8 @@ private:
     /* data */
 public:
    void print(int result){
-    cout<<"Prog2 START!"<<endl;
-    
+    cout<<"Prog2 with id : "<< this_thread::get_id() <<endl;
+
     cout<<result<<endl;
     int colichestvo=result;
     
@@ -162,11 +162,11 @@ public:
        int kratnost_32=result%32;
         if(p>2&&kratnost_32==0){
             cout<<result<<endl;
-            cout<<"Prog2 END!"<<endl;
+            cout<<"Prog2 end with id : "<<this_thread::get_id()<<endl;
         }
         else{
             cout<<"It is not more than 2 characters and it is not a multiple of 32 !!!."<<endl;
-            cout<<"Prog2 END!"<<endl;
+            cout<<"Prog2 end with id : "<<this_thread::get_id()<<endl;
         }
        
         
@@ -176,31 +176,21 @@ public:
 
 
 int main() {
-    
+    cout<<"Main start with id : "<<this_thread::get_id()<<endl;
+    setlocale(LC_ALL,"ru");
     Steam Steam;
     Prog2 Prog;
-    
     bool flag=false;
-    
     int res;
-    
-    
-    
-    thread steam1([&](){
-       flag=Steam.steam1();
+    thread st1([&](){
+        flag=Steam.steam1();
     });
+    st1.join();
     if(flag==true){
-       thread steam2([&](){
-           res=Steam.steam2();
-        });
-        
-        thread t([&](){
-            Prog.print(res);
-       });
-        steam2.join();
-        t.join();
+        res=Steam.steam2();
+        Prog.print(res);
     }
-    steam1.join();
+    
     
     return 0;
 }
